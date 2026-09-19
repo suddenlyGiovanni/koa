@@ -302,6 +302,19 @@ describe('res.body=', () => {
       res.body = new Blob([new Uint8Array([1, 2, 3])], { type: 'application/octet-stream' })
       assert.strictEqual(3, res.header['content-length'])
     })
+
+    it('should keep the Blob content type', () => {
+      const res = response()
+      res.body = new Blob([new Uint8Array([1, 2, 3])], { type: 'image/png' })
+      assert.strictEqual('image/png', res.header['content-type'])
+    })
+
+    it('should not override an explicit content type', () => {
+      const res = response()
+      res.type = 'application/json'
+      res.body = new Blob(['x'], { type: 'image/png' })
+      assert.strictEqual('application/json; charset=utf-8', res.header['content-type'])
+    })
   })
 
   describe('when a response is given', () => {
